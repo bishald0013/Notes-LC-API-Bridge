@@ -7,17 +7,56 @@ Routes ->
             => which takes "camp_data.json" as an input variable and find out the campaign id to send the meeting link.
             => in "sendMeetingInvitation" function it calls another function "runAPICall" to create an "curl" invitation link with the help of campaign id "cmp_id".
 
-            function runAPICall(){}
+           ## function runAPICall(){}
 
             => here function "runAPICall" is responsible to create an "curl" with "cmp_id"/"campaign id".
-            => function "runAPICall" takes "cmp_id" as argument and send it through body.
+            => function "runAPICall" takes "cmp_id" as argument and send it through "CURLOPT_POSTFIELDS" as body and "CURLOPT_HTTPHEADER" as header.
                 
                 https::body ->:: ex -> {
                                             "campId" : ["Cgg302nauiodhad", "adawd243dadaw", "dawdawd12e12ed"]
                                        }
+                https::header ->::ex -> {
+                                            "bridge" : "433276623d5cc0c8c9955b35eb2742d6",
+                                            "Content-Type : 'application/json'
+                                        }
+ ************************************************************************ Code descriptions **********************************************************************************
+                
+               ## $input = file_get_contents(base_path() . '/config/camp_data.json');
 
+                -> $input is a variable which is responsible to hold the value from "camp_data.json"
+                        :: where "file_get_contents(base_path() . '/config/camp_data.json')" = "file_get_contents()" is a built in php function which read an entire content 
+                                                                                                from a file into a string.In this example it will read all the content from 
+                                                                                                "camp_data.json" and "/config" is the path name.
+                
+                ## $tempArray = json_decode($input, true);    
+                
+                -> $tempArray is also a variable which is responsible for decoding the value and store it
+                        :: where "json_decode($input, true)" = "json_decode()" is a function which takes 2 argument where 1st argument is "$input" which hold the value from 
+                                                                "camp_data.json" and 2nd value is the condition in our case it is "true" which will return us an associative
+                                                                array. 
 
- ************************************************************************* Code **********************************************************************************************
+                                            where :: $tempArray =  Array
+                                                                        (
+                                                                            [0] => Array
+                                                                                (
+                                                                                    [55555] => Array
+                                                                                        (
+                                                                                            [U9GHxXEEmEL78SnMN4ki] => 1
+                                                                                            [zxcvbnmlkjgdrt] => 4
+                                                                                            [lBhSCRTF939Xv9LrA0oF] => 1
+                                                                                        )
+                                                                                )
+                                                                            [1] => Array
+                                                                                (
+                                                                                    [666666] => Array
+                                                                                        (
+                                                                                            [U9GHxXEEmEL78SnMN4ki] => 1
+                                                                                            [lBhSCRTF939Xv9LrA0oF] => 1
+                                                                                        )
+                                                                                )
+                                                                        )  
+                                      
+ ********************************************************************* Code /sendMeetingInvitation **********************************************************************************************
 
     public function sendMeetingInvitation(Request $request){
         try {
