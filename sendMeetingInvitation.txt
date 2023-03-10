@@ -11,9 +11,10 @@ Routes ->
 
             => here function "runAPICall" is responsible to create an "curl" with "cmp_id"/"campaign id".
             => function "runAPICall" takes "cmp_id" as argument and send it through body.
-                    :: ex -> {
-                                "campId" : ["Cgg302nauiodhad", "adawd243dadaw", "dawdawd12e12ed"]
-                             }
+                
+                https::body ->:: ex -> {
+                                            "campId" : ["Cgg302nauiodhad", "adawd243dadaw", "dawdawd12e12ed"]
+                                       }
 
 
  ************************************************************************* Code **********************************************************************************************
