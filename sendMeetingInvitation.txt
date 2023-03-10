@@ -1,0 +1,72 @@
+Routes -> 
+       
+       Route::get('send_meets',[passportAuthController::class,'sendMeetingInvitation']);
+
+            => route "send_meets" is responsible to create a meeting link and send meeting link to the attendes.
+            => sendMeetingInvitation is a public function of a class
+            => which takes "camp_data.json" as an input variable and find out the campaign id to send the meeting link. 
+
+
+
+ ************************************************************************* Code **********************************************************************************************
+
+    public function sendMeetingInvitation(Request $request){
+        try {
+
+			$input = file_get_contents(base_path() . '/config/camp_data.json');
+			$tempArray = json_decode($inpt, true);
+
+			if(!empty($tempArray) && count($tempArray) >= 2){
+				
+				foreach($tempArray as $arr_key => $atte_arr){
+					
+					if ((isset($atte_arr[55555]) && $atte_arr[55555]) || (isset($atte_arr[666666]) && $atte_arr[666666])) {
+						continue;
+					}
+					
+					$del_flag = true;
+					if(!empty($atte_arr)){
+						foreach($atte_arr as $cu_data){
+							if(!empty($cu_data)){
+								foreach($cu_data as $cmp_id => $cmp_count){
+									if($cmp_count && $cmp_count > 0){
+										$respo_arr = $this->runAPICall($cmp_id);
+										$respo_arr = json_decode($respo_arr);
+										if($respo_arr[0]->error == true){
+											$del_flag == false;
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					##unset array here
+					if(isset($tempArray[$arr_key]) && $del_flag == true){
+						unset($tempArray[$arr_key]);
+
+						## Append data to json file.
+						$jsonData = json_encode($tempArray);
+						file_put_contents(base_path() . '/config/camp_data.json', $jsonData);
+					}
+				}
+
+				$data['id'] = 1;
+				$data['error'] = false;
+				$data['error_code'] = 'success';
+				$data['error_message'] = 'cron is executed successfully.';
+				return response()->json($data);
+
+			}else{
+				$data['id'] = 1;
+				$data['error'] = true;
+				$data['error_code'] = 'validation_error';
+				$data['error_message'] = 'No data found for the request.';
+				return response()->json($data);
+			}
+			
+		} catch (\Throwable $th) {
+			throw $th;
+		}
+    }
+
