@@ -3,9 +3,17 @@ Routes ->
        Route::get('send_meets',[passportAuthController::class,'sendMeetingInvitation']);
 
             => route "send_meets" is responsible to create a meeting link and send meeting link to the attendes.
-            => sendMeetingInvitation is a public function of a class
-            => which takes "camp_data.json" as an input variable and find out the campaign id to send the meeting link. 
+            => sendMeetingInvitation is a public function of a class.
+            => which takes "camp_data.json" as an input variable and find out the campaign id to send the meeting link.
+            => in "sendMeetingInvitation" function it calls another function "runAPICall" to create an "curl" invitation link with the help of campaign id "cmp_id".
 
+            function runAPICall(){}
+
+            => here function "runAPICall" is responsible to create an "curl" with "cmp_id"/"campaign id".
+            => function "runAPICall" takes "cmp_id" as argument and send it through body.
+                    :: ex -> {
+                                "campId" : ["Cgg302nauiodhad", "adawd243dadaw", "dawdawd12e12ed"]
+                             }
 
 
  ************************************************************************* Code **********************************************************************************************
@@ -65,6 +73,36 @@ Routes ->
 				return response()->json($data);
 			}
 			
+		} catch (\Throwable $th) {
+			throw $th;
+		}
+    }
+
+    public function runAPICall($camp_str = ''){
+        try {
+			$api_url= env('API_URL', 'https://dev.letscalendar.com/api/v1/sendmeeting');
+			$curl = curl_init();
+			curl_setopt_array($curl, array(
+				CURLOPT_URL => "$api_url",
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'POST',
+				CURLOPT_POSTFIELDS =>'{
+					"campId": "'.$camp_str.'"
+				}',
+				CURLOPT_HTTPHEADER => array(
+					'bridge: 433276623d5cc0c8c9955b35eb2742d6',
+					'Content-Type: application/json'
+				),
+			));
+			
+			$response = curl_exec($curl);
+			curl_close($curl);
+			return $response;
 		} catch (\Throwable $th) {
 			throw $th;
 		}
